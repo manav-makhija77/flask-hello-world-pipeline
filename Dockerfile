@@ -1,17 +1,20 @@
-# Use official Python image as base
-FROM python:3.9
+# Use the official Python image as a base
+FROM python:3.8-slim
 
-# Set the working directory
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy all files from repo to container
-COPY . .
+# Copy the requirements file and install dependencies
+COPY requirements.txt .
 
-# Install dependencies
+# Install dependencies (including Gunicorn)
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose port (Flask runs on 5000 by default)
+# Copy the Flask app into the container
+COPY . .
+
+# Expose the port the app will run on
 EXPOSE 5000
 
-# Command to run the app
-CMD ["gunicorn", "-b", "0.0.0.0:8000", "app:app"]
+# Set the entrypoint to run the Gunicorn server
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "app:app"]
